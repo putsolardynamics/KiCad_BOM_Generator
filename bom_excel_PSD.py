@@ -10,6 +10,10 @@ from openpyxl.utils import get_column_letter
 vendors = ["Mouser", "Farnell", "TME", "Digikey"]
 vendors_fields = ["Cena", "Koszt", "Link"]
 
+# if you change columns elements, remember to make changes in "fill component_table with data" section
+columns = ['Id', 'Ilość', 'Symbol(e)', 'Wartość', 'Nazwa', 'Kod producenta', 'Footprint', 'Datasheet', 'DNP']
+# columns = ['Id', 'Qty', 'Reference(s)', 'Value', 'Name', 'Manufacturer code', 'Footprint', 'Datasheet', 'DNP']
+
 # colors in aRGB format
 header_color = "FFF7CB4D"
 row_light = "FFFFFFFF"
@@ -75,7 +79,6 @@ ws = wb.active
 # ======================================================================================================================
 # Create BOM header
 # Add basic columns
-columns = ['Id', 'Qty', 'Reference(s)', 'Value', 'Name', 'Footprint', 'Datasheet', 'DNP']
 for idx, col in enumerate(columns):
     # convert column index to letter starting from A
     col_letter = get_column_letter(idx+1)
@@ -118,6 +121,9 @@ for group in grouped:
         refs += component.getRef()
         comp = component
 
+# ====================================================================================
+# fill component_table with data
+# ====================================================================================
     # Fill in the component groups common data
     item_id += 1
     row.append(item_id)
@@ -125,6 +131,7 @@ for group in grouped:
     row.append(refs)
     row.append(comp.getValue())
     row.append(comp.getLibName() + ":" + comp.getPartName())
+    row.append('')  # empty manufacturer code cell
     row.append(net.getGroupFootprint(group))
     row.append(net.getGroupDatasheet(group))
     row.append(comp.getDNPString())
@@ -213,3 +220,5 @@ for idx, col in enumerate(columns, 1):
 
 # write results
 wb.save(sys.argv[2])
+
+print("BOM created")
